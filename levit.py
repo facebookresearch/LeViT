@@ -49,7 +49,7 @@ def LeViT_256(num_classes, distillation, pretrained=False):
 
 
 @register_model
-def LeViT_384(num_classes, pretrained=False):
+def LeViT_384(num_classes, distillation, pretrained=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
