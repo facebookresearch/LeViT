@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import itertools
 import time
 import os
@@ -104,8 +103,8 @@ class Linear_BN(torch.nn.Sequential):
         super().__init__()
         self.add_module('c', torch.nn.Linear(a, b, bias=False))
         bn = torch.nn.BatchNorm1d(b)
-        nn.init.constant_(bn.weight, bn_weight_init)
-        nn.init.constant_(bn.bias, 0)
+        torch.nn.init.constant_(bn.weight, bn_weight_init)
+        torch.nn.init.constant_(bn.bias, 0)
         self.add_module('bn', bn)
 
         global FLOPS_COUNTER
@@ -136,7 +135,7 @@ class BN_Linear(torch.nn.Sequential):
         l = torch.nn.Linear(a, b, bias=bias)
         trunc_normal_(l.weight, std=std)
         if bias:
-            nn.init.constant_(l.bias, 0)
+            torch.nn.init.constant_(l.bias, 0)
         self.add_module('l', l)
         global FLOPS_COUNTER
         FLOPS_COUNTER += a*b
@@ -178,7 +177,7 @@ class Residual(torch.nn.Module):
         return x+self.m(x)
 
 
-class Attention(nn.Module):
+class Attention(torch.nn.Module):
     def __init__(self, dim, key_dim, num_heads=8,
                  attn_ratio=4,
                  activation=None,
@@ -249,7 +248,7 @@ class Attention(nn.Module):
         return x
 
 
-class Subsample(nn.Module):
+class Subsample(torch.nn.Module):
     def __init__(self, stride, resolution):
         super().__init__()
         self.stride = stride
@@ -262,7 +261,7 @@ class Subsample(nn.Module):
         return x
 
 
-class AttentionSubsample(nn.Module):
+class AttentionSubsample(torch.nn.Module):
     def __init__(self, in_dim, out_dim, key_dim, num_heads=8,
                  attn_ratio=4,
                  activation=None,
@@ -348,7 +347,7 @@ class AttentionSubsample(nn.Module):
         return x
 
 
-class LeViT(nn.Module):
+class LeViT(torch.nn.Module):
     """ Vision Transformer with support for patch or hybrid CNN input stage
     """
 
@@ -416,11 +415,11 @@ class LeViT(nn.Module):
                             Linear_BN(
                                 h, embed_dim[i+1], bn_weight_init=0, resolution=resolution),
                         )))
-        self.blocks = nn.Sequential(*self.blocks)
+        self.blocks = torch.nn.Sequential(*self.blocks)
 
         # Classifier head
         self.head = BN_Linear(
-            embed_dim[-1], num_classes) if num_classes > 0 else nn.Identity()
+            embed_dim[-1], num_classes) if num_classes > 0 else torch.nn.Identity()
         self.default_cfg = _cfg()
 
         self.FLOPS = FLOPS_COUNTER

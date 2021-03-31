@@ -247,7 +247,7 @@ def replace_batchnorm(net):
             getattr(net, child_name).bias = torch.nn.Parameter(
                 torch.zeros(getattr(net, child_name).weight.size(0)))
         elif isinstance(child, torch.nn.BatchNorm2d):
-            setattr(net, child_name, torch.nn.Sequential())
+            setattr(net, child_name, torch.nn.Identity())
         else:
             replace_batchnorm(child)
 

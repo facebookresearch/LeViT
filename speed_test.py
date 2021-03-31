@@ -9,11 +9,6 @@ import levit
 import torchvision
 import utils
 torch.autograd.set_grad_enabled(False)
-print(torch.cuda.get_device_properties(0).total_memory)
-
-os.system('echo -n "nb processors "; '
-          'cat /proc/cpuinfo | grep ^processor | wc -l; '
-          'cat /proc/cpuinfo | grep ^"model name" | tail -1')
 
 
 T0 = 10
@@ -63,7 +58,10 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
 
 for device in [ 'cuda:0', 'cpu']:
     if device=='cpu':
-        print('1 cpu thread')
+        os.system('echo -n "nb processors "; '
+          'cat /proc/cpuinfo | grep ^processor | wc -l; '
+          'cat /proc/cpuinfo | grep ^"model name" | tail -1')
+        print('Using 1 cpu thread')
         torch.set_num_threads(1)
         compute_throughput = compute_throughput_cpu
     else:
