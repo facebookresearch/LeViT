@@ -3,176 +3,159 @@ import torch.nn as nn
 import itertools
 import time
 import os
+import utils
 
 from timm.models.vision_transformer import _cfg, trunc_normal_
 from timm.models.registry import register_model
 
 
 @register_model
-def LeViT_128S(num_classes, distillation, pretrained=False):
+def LeViT_128S(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_6_8', X='2_3_4',
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-128S/checkpoint.pth')['model'])
+            'weights/LeViT-128S/model.pth')['model'])
+    if fuse:
+        utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_128(num_classes, distillation, pretrained=False):
+def LeViT_128(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_8_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-128/checkpoint.pth')['model'])
+            'weights/LeViT-128/model.pth')['model'])
+    if fuse:
+        utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_192(num_classes, distillation, pretrained=False):
+def LeViT_192(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='192_288_384', D=32, N='3_5_6', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-192/checkpoint.pth')['model'])
+            'weights/LeViT-192/model.pth')['model'])
+    if fuse:
+        utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_256(num_classes, distillation, pretrained=False):
+def LeViT_256(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='256_384_512', D=32, N='4_6_8', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-256/checkpoint.pth')['model'])
+            'weights/LeViT-256/model.pth')['model'])
+    if fuse:
+        utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_384(num_classes, distillation, pretrained=False):
+def LeViT_384(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-384/checkpoint.pth')['model'])
+            'weights/LeViT-384/model.pth')['model'])
+    if fuse:
+        utils.replace_batchnorm(net)
     return net
 
 
 FLOPS_COUNTER = 0
 
 
-class Conv2d_BN(torch.nn.Module):
+class Conv2d_BN(torch.nn.Sequential):
     def __init__(self, a, b, ks=1, stride=1, pad=0, dilation=1, groups=1, bn_weight_init=1, resolution=-10000):
         super().__init__()
-        self.c = torch.nn.Conv2d(
-            a, b, ks, stride, pad, dilation, groups, bias=False)
-        self.bn = torch.nn.BatchNorm2d(b)
-        nn.init.constant_(self.bn.weight, bn_weight_init)
-        nn.init.constant_(self.bn.bias, 0)
+        self.add_module('c', torch.nn.Conv2d(
+            a, b, ks, stride, pad, dilation, groups, bias=False))
+        bn = torch.nn.BatchNorm2d(b)
+        torch.nn.init.constant_(bn.weight, bn_weight_init)
+        torch.nn.init.constant_(bn.bias, 0)
+        self.add_module('bn', bn)
 
         global FLOPS_COUNTER
         output_points = ((resolution+2*pad-dilation*(ks-1)-1)//stride+1)**2
         FLOPS_COUNTER += a*b*output_points*(ks**2)
 
     @torch.no_grad()
-    def train(self, mode=True):
-        super().train(mode)
-        if mode and hasattr(self, 'cb'):
-            del self.w
-            del self.b
-        else:
-            w = self.bn.weight/(self.bn.running_var+self.bn.eps)**0.5
-            b = self.bn.bias-self.bn.running_mean*self.bn.weight / \
-                (self.bn.running_var+self.bn.eps)**0.5
-            self.w = self.c.weight*w[:, None, None, None]
-            self.b = b
-
-    def forward(self, x):
-        if self.training:
-            return self.bn(self.c(x))
-        else:
-            return torch.nn.functional.conv2d(
-                x, self.w,
-                bias=self.b,
-                stride=self.c.stride,
-                padding=self.c.padding,
-                dilation=self.c.dilation,
-                groups=self.c.groups)
+    def fuse(self):
+        c, bn = self._modules.values()
+        w = bn.weight/(bn.running_var+bn.eps)**0.5
+        w = c.weight*w[:, None, None, None]
+        b = bn.bias-bn.running_mean*bn.weight / (bn.running_var+bn.eps)**0.5
+        m = torch.nn.Conv2d(w.size(1), w.size(
+            0), w.shape[2:], stride=self.c.stride, padding=self.c.padding, dilation=self.c.dilation, groups=self.c.groups)
+        m.weight.data.copy_(w)
+        m.bias.data.copy_(b)
+        return m
 
 
-class Linear_BN(torch.nn.Module):
-    def __init__(self, a, b, ks=1, stride=1, pad=0, dilation=1, groups=1, bn_weight_init=1, resolution=-100000):
+class Linear_BN(torch.nn.Sequential):
+    def __init__(self, a, b, bn_weight_init=1, resolution=-100000):
         super().__init__()
-        assert ks == 1
-        assert stride == 1
-        assert pad == 0
-        assert dilation == 1
-        assert groups == 1
-        self.c = torch.nn.Linear(a, b, bias=False)
-        self.bn = torch.nn.BatchNorm1d(b)
-        nn.init.constant_(self.bn.weight, bn_weight_init)
-        nn.init.constant_(self.bn.bias, 0)
+        self.add_module('c', torch.nn.Linear(a, b, bias=False))
+        bn = torch.nn.BatchNorm1d(b)
+        nn.init.constant_(bn.weight, bn_weight_init)
+        nn.init.constant_(bn.bias, 0)
+        self.add_module('bn', bn)
 
         global FLOPS_COUNTER
         output_points = resolution**2
         FLOPS_COUNTER += a*b*output_points
 
     @torch.no_grad()
-    def train(self, mode=True):
-        super().train(mode)
-        if mode and hasattr(self, 'cb'):
-            del self.w
-            del self.b
-        else:
-            w = self.bn.weight/(self.bn.running_var+self.bn.eps)**0.5
-            b = self.bn.bias-self.bn.running_mean*self.bn.weight / \
-                (self.bn.running_var+self.bn.eps)**0.5
-            self.w = self.c.weight*w[:, None]
-            self.b = b
+    def fuse(self):
+        l, bn = self._modules.values()
+        w = bn.weight/(bn.running_var+bn.eps)**0.5
+        w = l.weight*w[:, None]
+        b = bn.bias-bn.running_mean*bn.weight / (bn.running_var+bn.eps)**0.5
+        m = torch.nn.Linear(w.size(1), w.size(0))
+        m.weight.data.copy_(w)
+        m.bias.data.copy_(b)
+        return m
 
     def forward(self, x):
-        if self.training:
-            x = self.c(x)
-            return self.bn(x.flatten(0, 1)).reshape_as(x)
-        else:
-            return torch.nn.functional.linear(
-                x, self.w, self.b)
+        l, bn = self._modules.values()
+        x = l(x)
+        return bn(x.flatten(0, 1)).reshape_as(x)
 
 
-class BN_Linear(torch.nn.Module):
+class BN_Linear(torch.nn.Sequential):
     def __init__(self, a, b, bias=True, std=0.02):
         super().__init__()
-        self.bn = torch.nn.BatchNorm1d(a)
-        self.l = torch.nn.Linear(a, b, bias=bias)
-        trunc_normal_(self.l.weight, std=std)
+        self.add_module('bn', torch.nn.BatchNorm1d(a))
+        l = torch.nn.Linear(a, b, bias=bias)
+        trunc_normal_(l.weight, std=std)
         if bias:
-            nn.init.constant_(self.l.bias, 0)
-
+            nn.init.constant_(l.bias, 0)
+        self.add_module('l', l)
         global FLOPS_COUNTER
         FLOPS_COUNTER += a*b
 
     @torch.no_grad()
-    def train(self, mode=True):
-        super().train(mode)
-        if mode and hasattr(self, 'w'):
-            del self.w
-            del self.b
+    def fuse(self):
+        bn, l = self._modules.values()
+        w = bn.weight/(bn.running_var+bn.eps)**0.5
+        b = bn.bias-self.bn.running_mean * \
+            self.bn.weight / (bn.running_var+bn.eps)**0.5
+        w = l.weight*w[None, :]
+        if l.bias is None:
+            b = b@self.l.weight.T
         else:
-            w = self.bn.weight/(self.bn.running_var+self.bn.eps)**0.5
-            b = self.bn.bias-self.bn.running_mean*self.bn.weight / \
-                (self.bn.running_var+self.bn.eps)**0.5
-            self.w = self.l.weight*w[None, :]
-            if self.l.bias is None:
-                self.b = b@self.l.weight.T
-            else:
-                self.b = (self.l.weight@b[:, None]).view(-1)+self.l.bias
-
-    def forward(self, x):
-        if self.training:
-            return self.l(self.bn(x))
-        else:
-            return torch.nn.functional.linear(
-                x, self.w, self.b)
+            b = (l.weight@b[:, None]).view(-1)+self.l.bias
+        m = torch.nn.Linear(w.size(1), w.size(0))
+        m.weight.data.copy_(w)
+        m.bias.data.copy_(b)
+        return m
 
 
 def b16(n, activation, resolution=224):
@@ -440,7 +423,7 @@ class LeViT(nn.Module):
             embed_dim[-1], num_classes) if num_classes > 0 else nn.Identity()
         self.default_cfg = _cfg()
 
-        print(FLOPS_COUNTER, 'flops')
+        self.FLOPS = FLOPS_COUNTER
         FLOPS_COUNTER = 0
 
     @torch.jit.ignore
@@ -507,7 +490,7 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
 
 
 if __name__ == '__main__':
-    net = LeViT_256(num_classes=1000, distillation=False).eval()
+    net = LeViT_256(num_classes=1000, distillation=True).eval()
     print('Running LeViT-256 on a random tensor ...')
     net(torch.randn(1, 3, 224, 224))
     print('... done')

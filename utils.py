@@ -237,3 +237,26 @@ def init_distributed_mode(args):
                                          world_size=args.world_size, rank=args.rank)
     torch.distributed.barrier()
     setup_for_distributed(args.rank == 0)
+
+
+def replace_batchnorm(net):
+    for child_name, child in net.named_children():
+        if hasattr(child, 'fuse'):
+            setattr(net, child_name, child.fuse())
+        elif isinstance(child, torch.nn.Conv2d):
+            getattr(net, child_name).bias = torch.nn.Parameter(
+                torch.zeros(getattr(net, child_name).weight.size(0)))
+        elif isinstance(child, torch.nn.BatchNorm2d):
+            setattr(net, child_name, torch.nn.Sequential())
+        else:
+            replace_batchnorm(child)
+
+
+def replace_layernorm(net):
+    import apex
+    for child_name, child in net.named_children():
+        if isinstance(child, torch.nn.LayerNorm):
+            setattr(net, child_name, apex.normalization.FusedLayerNorm(
+                child.weight.size(0)))
+        else:
+            replace_layernorm(child)

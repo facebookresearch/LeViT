@@ -5,8 +5,9 @@ import torch
 import torchvision
 import time
 import timm
-import models_BN3000L
+import levit
 import torchvision
+import utils
 torch.autograd.set_grad_enabled(False)
 print(torch.cuda.get_device_properties(0).total_memory)
 
@@ -15,25 +16,8 @@ os.system('echo -n "nb processors "; '
           'cat /proc/cpuinfo | grep ^"model name" | tail -1')
 
 
-def replace_batchnorm(net):
-    for child_name, child in net.named_children():
-        if isinstance(child, torch.nn.BatchNorm2d):
-            setattr(net, child_name, torch.nn.Sequential())
-        else:
-            replace_batchnorm(child)
-
-
-def replace_layernorm(net):
-    for child_name, child in net.named_children():
-        if isinstance(child, torch.nn.LayerNorm):
-            setattr(net, child_name, apex.normalization.FusedLayerNorm(
-                child.weight.size(0)))
-        else:
-            replace_layernorm(child)
-
-
-T0 = 1
-T1 = 3
+T0 = 10
+T1 = 30
 
 
 def compute_throughput_cpu(name, model, device, batch_size, resolution=224):
@@ -45,12 +29,13 @@ def compute_throughput_cpu(name, model, device, batch_size, resolution=224):
 
     timing = []
     while sum(timing) < T1:
-        start = time.time()
+        start = time.process_time()
         model(inputs)
-        timing.append(time.time() - start)
+        timing.append(time.process_time() - start)
     timing = torch.as_tensor(timing, dtype=torch.float32)
     print(name, device, batch_size / timing.mean().item(),
           'images/s @ batch size', batch_size)
+    print(timing.median().item() / timing.min().item(), timing.numel())
 
 
 def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
@@ -73,39 +58,32 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
     timing = torch.as_tensor(timing, dtype=torch.float32)
     print(name, device, batch_size / timing.mean().item(),
           'images/s @ batch size', batch_size)
+    print(timing.median().item() / timing.min().item(), timing.numel())
 
 
-for threads in [-1, 1]:
-    if threads > 0:
-        print(threads, 'threads')
-        torch.set_num_threads(threads)
-        device = 'cpu'
+for device in [ 'cuda:0', 'cpu']:
+    if device=='cpu':
+        print('1 cpu thread')
+        torch.set_num_threads(1)
         compute_throughput = compute_throughput_cpu
     else:
-        print('cuda')
-        device = 'cuda:0'
+        print(torch.cuda.get_device_name(torch.cuda.current_device()))
         compute_throughput = compute_throughput_cuda
 
-    for n, batch_size0, kwargs, resolution in [
-        ('resnet50', 1024, {}, 224),
-        #('LeViT', 2048, {'C': '128_192_256', 'D': 16, 'N': '4_6_8', 'X': '4_4_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('LeViT', 2048, {'C': '128_256_384', 'D': 16, 'N': '4_6_8',
-                         'X': '2_3_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('LeViT', 2048, {'C': '128_256_384', 'D': 16, 'N': '4_8_12',
-                         'X': '4_4_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('LeViT', 2048, {'C': '192_288_384', 'D': 32, 'N': '3_5_6',
-                         'X': '4_4_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('LeViT', 2048, {'C': '256_384_512', 'D': 32, 'N': '4_6_8',
-                         'X': '4_4_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('LeViT', 1024, {'C': '384_576_768', 'D': 32, 'N': '6_9_12',
-                         'X': '4_4_4', 'act': 'Hardswish', 'num_classes': 1000}, 224),
-        ('vit_deit_tiny_distilled_patch16_224', 2048, {}, 224),
-        ('vit_deit_small_distilled_patch16_224', 2048, {}, 224),
-        ('efficientnet_b0',   1024, {}, 224),
-        ('efficientnet_b1',   1024, {}, 240),
-        ('efficientnet_b2',   512, {}, 260),
-        ('efficientnet_b3',   512, {}, 300),
-        ('efficientnet_b4',   256, {}, 380),
+    for n, batch_size0, resolution in [
+        ('timm.models.resnet50', 1024, 224),
+        ('levit.LeViT_128S', 2048, 224),
+        ('levit.LeViT_128', 2048, 224),
+        ('levit.LeViT_192', 2048, 224),
+        ('levit.LeViT_256', 2048, 224),
+        ('levit.LeViT_384', 1024, 224),
+        ('timm.models.vit_deit_tiny_distilled_patch16_224', 2048, 224),
+        ('timm.models.vit_deit_small_distilled_patch16_224', 2048, 224),
+        ('timm.models.efficientnet_b0',   1024, 224),
+        ('timm.models.efficientnet_b1',   1024, 240),
+        ('timm.models.efficientnet_b2',   512, 260),
+        ('timm.models.efficientnet_b3',   512, 300),
+        ('timm.models.efficientnet_b4',   256, 380),
     ]:
         if device == 'cpu':
             batch_size = 16
@@ -114,16 +92,13 @@ for threads in [-1, 1]:
             torch.cuda.empty_cache()
         inputs = torch.randn(batch_size, 3, resolution,
                              resolution, device=device)
-        for m in [models_BN3000L, timm.models]:
-            if hasattr(m, n):
-                model = getattr(m, n)(**kwargs)
-        if 'efficientnet_' in n:
-            replace_batchnorm(model)
+        model = eval(n)(num_classes=1000)
+        utils.replace_batchnorm(model)
         if device != 'cpu' and 'deit' in n:
-            replace_layernorm(model)
+            utils.replace_layernorm(model)
         model.to(device)
         model.eval()
         model = torch.jit.trace(model, inputs)
-        compute_throughput(n+str(kwargs), model, device,
+        compute_throughput(n, model, device,
                            batch_size, resolution=resolution)
         print()
