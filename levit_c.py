@@ -8,61 +8,64 @@ from timm.models.vision_transformer import _cfg, trunc_normal_
 from timm.models.registry import register_model
 
 
+def load_weights(net, path):
+    d = torch.load(path)['model']
+    D = net.state_dict()
+    for k in d.keys():
+        if D[k].shape != d[k].shape:
+            d[k] = d[k][:, :, None, None]
+
+
 @register_model
-def LeViT_128S(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_c_128S(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_6_8', X='2_3_4',
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
-        net.load_state_dict(torch.load(
-            'weights/LeViT-128S/model.pth')['model'])
+        load_weights(net, 'weights/LeViT-128S/model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_128(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_c_128(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_8_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        net.load_state_dict(torch.load(
-            'weights/LeViT-128/model.pth')['model'])
+        load_weights(net, 'weights/LeViT-128/model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_192(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_c_192(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='192_288_384', D=32, N='3_5_6', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        net.load_state_dict(torch.load(
-            'weights/LeViT-192/model.pth')['model'])
+        load_weights(net, 'weights/LeViT-192/model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_256(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_c_256(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='256_384_512', D=32, N='4_6_8', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        net.load_state_dict(torch.load(
-            'weights/LeViT-256/model.pth')['model'])
+        load_weights(net, 'weights/LeViT-256/model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
 
 
 @register_model
-def LeViT_384(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_c_384(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        net.load_state_dict(torch.load(
-            'weights/LeViT-384/model.pth')['model'])
+        load_weights(net, 'weights/LeViT-384/model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -96,36 +99,6 @@ class Conv2d_BN(torch.nn.Sequential):
         m.weight.data.copy_(w)
         m.bias.data.copy_(b)
         return m
-
-
-class Linear_BN(torch.nn.Sequential):
-    def __init__(self, a, b, bn_weight_init=1, resolution=-100000):
-        super().__init__()
-        self.add_module('c', torch.nn.Linear(a, b, bias=False))
-        bn = torch.nn.BatchNorm1d(b)
-        torch.nn.init.constant_(bn.weight, bn_weight_init)
-        torch.nn.init.constant_(bn.bias, 0)
-        self.add_module('bn', bn)
-
-        global FLOPS_COUNTER
-        output_points = resolution**2
-        FLOPS_COUNTER += a*b*output_points
-
-    @torch.no_grad()
-    def fuse(self):
-        l, bn = self._modules.values()
-        w = bn.weight/(bn.running_var+bn.eps)**0.5
-        w = l.weight*w[:, None]
-        b = bn.bias-bn.running_mean*bn.weight / (bn.running_var+bn.eps)**0.5
-        m = torch.nn.Linear(w.size(1), w.size(0))
-        m.weight.data.copy_(w)
-        m.bias.data.copy_(b)
-        return m
-
-    def forward(self, x):
-        l, bn = self._modules.values()
-        x = l(x)
-        return bn(x.flatten(0, 1)).reshape_as(x)
 
 
 class BN_Linear(torch.nn.Sequential):
@@ -191,11 +164,12 @@ class Attention(torch.nn.Module):
         self.dh = int(attn_ratio*key_dim)*num_heads
         self.attn_ratio = attn_ratio
         h = self.dh + nh_kd*2
-        self.qkv = Linear_BN(dim, h, resolution=resolution)
-        self.proj = torch.nn.Sequential(activation(), Linear_BN(
+        self.qkv = Conv2d_BN(dim, h, resolution=resolution)
+        self.proj = torch.nn.Sequential(activation(), Conv2d_BN(
             self.dh, dim, bn_weight_init=0, resolution=resolution))
 
-        points = list(itertools.product(range(resolution), range(resolution)))
+        points = list(itertools.product(
+            range(resolution), range(resolution)))
         N = len(points)
         attention_offsets = {}
         idxs = []
@@ -221,43 +195,25 @@ class Attention(torch.nn.Module):
     @torch.no_grad()
     def train(self, mode=True):
         super().train(mode)
-        if True:
-            if mode and hasattr(self, 'ab'):
-                del self.ab
-            else:
-                self.ab = self.attention_biases[:, self.attention_bias_idxs]
+        if mode and hasattr(self, 'ab'):
+            del self.ab
+        else:
+            self.ab = self.attention_biases[:, self.attention_bias_idxs]
 
-    def forward(self, x):  # x (B,N,C)
-        B, N, C = x.shape
-        qkv = self.qkv(x)
-        q, k, v = qkv.view(B, N, self.num_heads, -
-                           1).split([self.key_dim, self.key_dim, self.d], dim=3)
-        q = q.permute(0, 2, 1, 3)
-        k = k.permute(0, 2, 1, 3)
-        v = v.permute(0, 2, 1, 3)
-
+    def forward(self, x, attn=torch.zeros(0, dtype=torch.int)):  # x (B,C,H,W)
+        B, C, H, W = x.shape
+        q, k, v = self.qkv(x).view(
+            B, self.num_heads, -1, H*W
+        ).split([self.key_dim, self.key_dim, self.d], dim=2)
         attn = (
-            (q @ k.transpose(-2, -1)) * self.scale
+            (q.transpose(-2, -1)@k) * self.scale
             +
             (self.attention_biases[:, self.attention_bias_idxs]
              if self.training else self.ab)
         )
         attn = attn.softmax(dim=-1)
-        x = (attn @ v).transpose(1, 2).reshape(B, N, self.dh)
+        x = (v@attn.transpose(-2, -1)).view(B, -1, H, W)
         x = self.proj(x)
-        return x
-
-
-class Subsample(torch.nn.Module):
-    def __init__(self, stride, resolution):
-        super().__init__()
-        self.stride = stride
-        self.resolution = resolution
-
-    def forward(self, x):
-        B, N, C = x.shape
-        x = x.view(B, self.resolution, self.resolution, C)[
-            :, ::self.stride, ::self.stride].reshape(B, -1, C)
         return x
 
 
@@ -277,14 +233,13 @@ class AttentionSubsample(torch.nn.Module):
         self.attn_ratio = attn_ratio
         self.resolution_ = resolution_
         self.resolution_2 = resolution_**2
-        h = self.dh+nh_kd
-        self.kv = Linear_BN(in_dim, h, resolution=resolution)
-
+        h = self.d*num_heads+nh_kd
+        self.kv = Conv2d_BN(in_dim, h, resolution=resolution)
         self.q = torch.nn.Sequential(
-            Subsample(stride, resolution),
-            Linear_BN(in_dim, nh_kd, resolution=resolution_))
-        self.proj = torch.nn.Sequential(activation(), Linear_BN(
-            self.dh, out_dim, resolution=resolution_))
+            torch.nn.AvgPool2d(1, stride, 0),
+            Conv2d_BN(in_dim, nh_kd))
+        self.proj = torch.nn.Sequential(
+            activation(), Conv2d_BN(self.d*num_heads, out_dim, resolution=resolution_))
 
         self.stride = stride
         self.resolution = resolution
@@ -327,21 +282,20 @@ class AttentionSubsample(torch.nn.Module):
         else:
             self.ab = self.attention_biases[:, self.attention_bias_idxs]
 
-    def forward(self, x):
-        B, N, C = x.shape
-        k, v = self.kv(x).view(B, N, self.num_heads, -
-                               1).split([self.key_dim, self.d], dim=3)
-        k = k.permute(0, 2, 1, 3)  # BHNC
-        v = v.permute(0, 2, 1, 3)  # BHNC
-        q = self.q(x).view(B, self.resolution_2, self.num_heads,
-                           self.key_dim).permute(0, 2, 1, 3)
+    def forward(self, x, attn=torch.zeros(0, dtype=torch.int)):
+        B, C, H, W = x.shape
+        k, v = self.kv(x).view(B, self.num_heads, -1, H *
+                               W).split([self.key_dim, self.d], dim=2)
+        q = self.q(x).view(B, self.num_heads, self.key_dim, self.resolution_2)
 
-        attn = (q @ k.transpose(-2, -1)) * self.scale + \
+        attn = (q.transpose(-2, -1) @ k) * self.scale + \
             (self.attention_biases[:, self.attention_bias_idxs]
              if self.training else self.ab)
         attn = attn.softmax(dim=-1)
 
-        x = (attn @ v).transpose(1, 2).reshape(B, -1, self.dh)
+        # (d,HW)  (HW,hw) -> (d,hw)
+        x = (v @ attn.transpose(-2, -1)).reshape(
+            B, -1, self.resolution_, self.resolution_)
         x = self.proj(x)
         return x
 
@@ -387,9 +341,9 @@ class LeViT(torch.nn.Module):
                     h = int(ed*mr)
                     self.blocks.append(
                         Residual(torch.nn.Sequential(
-                            Linear_BN(ed, h, resolution=resolution),
+                            Conv2d_BN(ed, h, resolution=resolution),
                             activation(),
-                            Linear_BN(h, ed, bn_weight_init=0,
+                            Conv2d_BN(h, ed, bn_weight_init=0,
                                       resolution=resolution),
                         )))
             if do[0] == 'Subsample':
@@ -405,20 +359,20 @@ class LeViT(torch.nn.Module):
                         resolution_=resolution_))
                 resolution = resolution_
                 if do[4] > 0:  # mlp_ratio
-                    h = int(embed_dim[i+1]*do[4])
+                    h = int(embed_dim[i+1]*do[5])
                     self.blocks.append(
                         Residual(torch.nn.Sequential(
-                            Linear_BN(embed_dim[i+1], h,
+                            Conv2d_BN(embed_dim[i+1], h,
                                       resolution=resolution),
                             activation(),
-                            Linear_BN(
+                            Conv2d_BN(
                                 h, embed_dim[i+1], bn_weight_init=0, resolution=resolution),
                         )))
         self.blocks = torch.nn.Sequential(*self.blocks)
 
         # Classifier head
         self.head = BN_Linear(
-            embed_dim[-1], num_classes) if num_classes > 0 else torch.nn.Identity()
+            embed_dim[-1], num_classes) if num_classes > 0 else nn.Identity()
         self.default_cfg = _cfg()
 
         self.FLOPS = FLOPS_COUNTER
@@ -428,12 +382,10 @@ class LeViT(torch.nn.Module):
     def no_weight_decay(self):
         return {x for x in self.state_dict().keys() if 'attention_biases' in x}
 
-    @torch.jit.export
     def forward_features(self, x):
         x = self.patch_embed(x)
-        x = x.flatten(2).transpose(1, 2)
         x = self.blocks(x)
-        x = x.mean(1)
+        x = torch.nn.functional.adaptive_avg_pool2d(x, 1).flatten(1)
         return x
 
     def forward(self, x):
@@ -488,7 +440,8 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
 
 
 if __name__ == '__main__':
-    for model in ['LeViT_128S', 'LeViT_128', 'LeViT_192', 'LeViT_256', 'LeViT_384']:
+    for model in ['LeViT_c_128S', 'LeViT_c_128', 'LeViT_c_192', 'LeViT_c_256', 'LeViT_c_384']:
         net = globals()[model](num_classes=1000, distillation=False).eval()
         print(model, net.FLOPS, 'FLOPs', sum(p.numel()
                                              for p in net.parameters() if p.requires_grad), 'parameters')
+        net(torch.randn(3,3,224,224))

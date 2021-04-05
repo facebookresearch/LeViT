@@ -56,11 +56,11 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
     print(timing.median().item() / timing.min().item(), timing.numel())
 
 
-for device in [ 'cuda:0', 'cpu']:
-    if device=='cpu':
+for device in ['cuda:0', 'cpu']:
+    if device == 'cpu':
         os.system('echo -n "nb processors "; '
-          'cat /proc/cpuinfo | grep ^processor | wc -l; '
-          'cat /proc/cpuinfo | grep ^"model name" | tail -1')
+                  'cat /proc/cpuinfo | grep ^processor | wc -l; '
+                  'cat /proc/cpuinfo | grep ^"model name" | tail -1')
         print('Using 1 cpu thread')
         torch.set_num_threads(1)
         compute_throughput = compute_throughput_cpu
@@ -70,13 +70,13 @@ for device in [ 'cuda:0', 'cpu']:
 
     for n, batch_size0, resolution in [
         ('timm.models.resnet50', 1024, 224),
+        ('timm.models.vit_deit_tiny_distilled_patch16_224', 2048, 224),
+        ('timm.models.vit_deit_small_distilled_patch16_224', 2048, 224),
         ('levit.LeViT_128S', 2048, 224),
         ('levit.LeViT_128', 2048, 224),
         ('levit.LeViT_192', 2048, 224),
         ('levit.LeViT_256', 2048, 224),
         ('levit.LeViT_384', 1024, 224),
-        ('timm.models.vit_deit_tiny_distilled_patch16_224', 2048, 224),
-        ('timm.models.vit_deit_small_distilled_patch16_224', 2048, 224),
         ('timm.models.efficientnet_b0',   1024, 224),
         ('timm.models.efficientnet_b1',   1024, 240),
         ('timm.models.efficientnet_b2',   512, 260),
@@ -92,8 +92,8 @@ for device in [ 'cuda:0', 'cpu']:
                              resolution, device=device)
         model = eval(n)(num_classes=1000)
         utils.replace_batchnorm(model)
-        if device != 'cpu' and 'deit' in n:
-            utils.replace_layernorm(model)
+        # if device != 'cpu' and 'deit' in n:
+        #    utils.replace_layernorm(model)
         model.to(device)
         model.eval()
         model = torch.jit.trace(model, inputs)
