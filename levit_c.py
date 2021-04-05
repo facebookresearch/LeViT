@@ -439,7 +439,7 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
 
 if __name__ == '__main__':
     for model in ['LeViT_c_128S', 'LeViT_c_128', 'LeViT_c_192', 'LeViT_c_256', 'LeViT_c_384']:
-        net = globals()[model](num_classes=1000, distillation=False).eval()
+        net = globals()[model](num_classes=1000, fuse=True, distillation=False).eval()
         print(model, net.FLOPS, 'FLOPs', sum(p.numel()
                                              for p in net.parameters() if p.requires_grad), 'parameters')
         net(torch.randn(3,3,224,224))

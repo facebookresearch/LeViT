@@ -488,6 +488,6 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
 
 if __name__ == '__main__':
     for model in ['LeViT_128S', 'LeViT_128', 'LeViT_192', 'LeViT_256', 'LeViT_384']:
-        net = globals()[model](num_classes=1000, distillation=False).eval()
+        net = globals()[model](num_classes=1000, fuse=True, distillation=False).eval()
         print(model, net.FLOPS, 'FLOPs', sum(p.numel()
                                              for p in net.parameters() if p.requires_grad), 'parameters')
