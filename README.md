@@ -50,11 +50,11 @@ We provide baseline LeViT  models trained with distllation on ImageNet 2012.
 
 | name | acc@1 | acc@5 | #params | url |
 | --- | --- | --- | --- | --- |
-| LeViT-128S | 75.6 |  92.3 | 7.0M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| LeViT-128  | 77.4 |  93.4 | 8.4M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| LeViT-192  | 79.1 |  94.3 | 10M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| LeViT-256  | 81.1 |  95.3 | 17M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| LeViT-384  | 82.4 |  95.9 | 39M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-128S | 75.6 |  92.3 | 7.0M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
+| LeViT-128  | 77.4 |  93.4 | 8.4M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
+| LeViT-192  | 79.1 |  94.3 | 10M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
+| LeViT-256  | 81.1 |  95.3 | 17M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
+| LeViT-384  | 82.4 |  95.9 | 39M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
 
 
 # Usage
