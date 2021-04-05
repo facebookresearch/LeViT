@@ -14,7 +14,7 @@ def LeViT_128S(num_classes, distillation=False, pretrained=False, fuse=False):
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-128S-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights/LeViT-128S-model.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -26,7 +26,7 @@ def LeViT_128(num_classes, distillation=False, pretrained=False, fuse=False):
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-128-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights/LeViT-128-model.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -38,7 +38,7 @@ def LeViT_192(num_classes, distillation=False, pretrained=False, fuse=False):
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-192-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights/LeViT-192-model.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -50,7 +50,7 @@ def LeViT_256(num_classes, distillation=False, pretrained=False, fuse=False):
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-256-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights/LeViT-256-model.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -62,7 +62,7 @@ def LeViT_384(num_classes, distillation=False, pretrained=False, fuse=False):
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            'weights/LeViT-384-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights/LeViT-384-model.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net

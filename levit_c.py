@@ -21,7 +21,7 @@ def LeViT_c_128S(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_6_8', X='2_3_4',
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, 'weights/LeViT-128S-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-128S-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -32,7 +32,7 @@ def LeViT_c_128(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_8_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, 'weights/LeViT-128-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-128-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -43,7 +43,7 @@ def LeViT_c_192(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='192_288_384', D=32, N='3_5_6', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, 'weights/LeViT-192-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-192-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -54,7 +54,7 @@ def LeViT_c_256(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='256_384_512', D=32, N='4_6_8', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, 'weights/LeViT-256-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-256-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -65,7 +65,7 @@ def LeViT_c_384(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, 'weights/LeViT-384-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-384-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
