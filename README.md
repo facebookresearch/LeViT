@@ -46,15 +46,15 @@ If you use this code for a paper please cite:
 
 # Model Zoo
 
-We provide baseline DeiT models pretrained on ImageNet 2012.
+We provide baseline LeViT  models trained with distllation on ImageNet 2012. 
 
 | name | acc@1 | acc@5 | #params | url |
 | --- | --- | --- | --- | --- |
-| DeiT-128S | 75.6 |  92.3 | 7.0M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| DeiT-128  | 77.4 |  93.4 | 8.4M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| DeiT-192  | 79.1 |  94.3 | 10M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| DeiT-256  | 81.1 |  95.3 | 17M | [model](https://dl.fbaipublicfiles.com/levit/) |
-| DeiT-384  | 82.4 |  95.9 | 39M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-128S | 75.6 |  92.3 | 7.0M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-128  | 77.4 |  93.4 | 8.4M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-192  | 79.1 |  94.3 | 10M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-256  | 81.1 |  95.3 | 17M | [model](https://dl.fbaipublicfiles.com/levit/) |
+| LeViT-384  | 82.4 |  95.9 | 39M | [model](https://dl.fbaipublicfiles.com/levit/) |
 
 
 # Usage
@@ -90,7 +90,7 @@ The directory structure is the standard layout for the torchvision [`datasets.Im
 ```
 
 ## Evaluation
-To evaluate a pre-trained DeiT-base on ImageNet val with a single GPU run:
+To evaluate a pre-trained LeViT-256 model on ImageNet val with a single GPU run:
 ```
 python main.py --eval --resume https://dl.fbaipublicfiles.com/levit/.... --data-path /path/to/imagenet
 ```
@@ -115,14 +115,14 @@ Distributed training is available via Slurm and [submitit](https://github.com/fa
 pip install submitit
 ```
 
-To train DeiT-base model on ImageNet on one nodes with 8 gpus for 500 epochs:
+To train LeViT-256 model on ImageNet on one nodes with 8 gpus for 500 epochs:
 
 ```
 python run_with_submitit.py --data-path /path/to/imagenet
 ```
 
 # License
-This repository is released under the Apache 2.0 license as found in the [LICENSE](LICENSE) file. ????
+This repository is released under the Apache 2.0 license as found in the [LICENSE](LICENSE) file.
 
 # Contributing
 We actively welcome your pull requests! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md) for more info.
