@@ -4,7 +4,7 @@ import time
 import os
 import utils
 
-from timm.models.vision_transformer import _cfg, trunc_normal_
+from timm.models.vision_transformer import trunc_normal_
 from timm.models.registry import register_model
 
 
@@ -372,7 +372,6 @@ class LeViT(torch.nn.Module):
         # Classifier head
         self.head = BN_Linear(
             embed_dim[-1], num_classes) if num_classes > 0 else nn.Identity()
-        self.default_cfg = _cfg()
 
         self.FLOPS = FLOPS_COUNTER
         FLOPS_COUNTER = 0

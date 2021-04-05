@@ -33,7 +33,7 @@ def get_args_parser():
     parser.add_argument('--epochs', default=500, type=int)
 
     # Model parameters
-    parser.add_argument('--model', default='LeViT', type=str, metavar='MODEL',
+    parser.add_argument('--model', default='LeViT_256', type=str, metavar='MODEL',
                         help='Name of model to train')
     parser.add_argument('--input-size', default=224,
                         type=int, help='images input size')
@@ -138,7 +138,7 @@ def get_args_parser():
     parser.add_argument('--teacher-model', default='regnety_160', type=str, metavar='MODEL',
                         help='Name of teacher model to train (default: "regnety_160"')
     parser.add_argument('--teacher-path', type=str,
-                        default='regnety_160-a5fe301d.pth')
+                        default='https://dl.fbaipublicfiles.com/deit/regnety_160-a5fe301d.pth')
     parser.add_argument('--distillation-type', default='hard',
                         choices=['none', 'soft', 'hard'], type=str, help="")
     parser.add_argument('--distillation-alpha',
