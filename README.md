@@ -14,6 +14,20 @@ python main.py --eval --model LeViT_192  #* Acc@1 79.078 Acc@5 94.322 loss 0.845
 python main.py --eval --model LeViT_256  #* Acc@1 81.068 Acc@5 95.284 loss 0.765
 python main.py --eval --model LeViT_384  #* Acc@1 82.352 Acc@5 95.868 loss 0.727
 
+Tesla V100-SXM2-16GB
+timm.models.resnet50 cuda:0 2659.06704018743 images/s @ batch size 1024
+timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1904.8173045654205 images/s @ batch size 2048
+timm.models.vit_deit_tiny_distilled_patch16_224 cuda:0 3924.9002281851103 images/s @ batch size 2048
+levit.LeViT_128S cuda:0 13196.719755958686 images/s @ batch size 2048
+levit.LeViT_128 cuda:0 9410.832706316309 images/s @ batch size 2048
+levit.LeViT_192 cuda:0 8758.662004266567 images/s @ batch size 2048
+levit.LeViT_256 cuda:0 6729.305903434312 images/s @ batch size 2048
+levit.LeViT_384 cuda:0 4167.53046565594 images/s @ batch size 1024
+timm.models.efficientnet_b0 cuda:0 4647.914214758268 images/s @ batch size 1024
+timm.models.efficientnet_b1 cuda:0 2818.9689147239824 images/s @ batch size 1024
+timm.models.efficientnet_b2 cuda:0 2106.107455818145 images/s @ batch size 512
+timm.models.efficientnet_b3 cuda:0 1245.8019442634989 images/s @ batch size 512
+timm.models.efficientnet_b4 cuda:0 593.3489423284612 images/s @ batch size 256
 
 model name	: Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz
 timm.models.resnet50 cpu 12.016911703481131 images/s @ batch size 16

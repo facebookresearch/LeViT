@@ -1,36 +1,49 @@
+LeViT_128S 282662866 FLOPs 6944714 parameters
+LeViT_128 383668800 FLOPs 8377112 parameters
+LeViT_192 621541244 FLOPs 9961261 parameters
+LeViT_256 1065926648 FLOPs 17326188 parameters
+LeViT_384 2334044148 FLOPs 38567086 parameters
+
+
+weights in /checkpoint/benjamingraham/LeViT/weights/*/model.pth
+
+python main.py --eval --model LeViT_128S #* Acc@1 75.566 Acc@5 92.254 loss 1.006
+python main.py --eval --model LeViT_128  #* Acc@1 77.420 Acc@5 93.392 loss 0.926
+python main.py --eval --model LeViT_192  #* Acc@1 79.078 Acc@5 94.322 loss 0.845
+python main.py --eval --model LeViT_256  #* Acc@1 81.068 Acc@5 95.284 loss 0.765
+python main.py --eval --model LeViT_384  #* Acc@1 82.352 Acc@5 95.868 loss 0.727
+
 Tesla V100-SXM2-16GB
+timm.models.resnet50 cuda:0 2659.06704018743 images/s @ batch size 1024
+timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1904.8173045654205 images/s @ batch size 2048
+timm.models.vit_deit_tiny_distilled_patch16_224 cuda:0 3924.9002281851103 images/s @ batch size 2048
+levit.LeViT_128S cuda:0 13196.719755958686 images/s @ batch size 2048
+levit.LeViT_128 cuda:0 9410.832706316309 images/s @ batch size 2048
+levit.LeViT_192 cuda:0 8758.662004266567 images/s @ batch size 2048
+levit.LeViT_256 cuda:0 6729.305903434312 images/s @ batch size 2048
+levit.LeViT_384 cuda:0 4167.53046565594 images/s @ batch size 1024
+timm.models.efficientnet_b0 cuda:0 4647.914214758268 images/s @ batch size 1024
+timm.models.efficientnet_b1 cuda:0 2818.9689147239824 images/s @ batch size 1024
+timm.models.efficientnet_b2 cuda:0 2106.107455818145 images/s @ batch size 512
+timm.models.efficientnet_b3 cuda:0 1245.8019442634989 images/s @ batch size 512
+timm.models.efficientnet_b4 cuda:0 593.3489423284612 images/s @ batch size 256
 
-timm.models.resnet50 cuda:0 2729.8296837075754 images/s @ batch size 1024
-timm.models.vit_deit_tiny_distilled_patch16_224 cuda:0 3986.6372804243597 images/s @ batch size 2048
-timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1946.2095732489531 images/s @ batch size 2048
-levit.LeViT_128S cuda:0 13418.954033386151 images/s @ batch size 2048
-levit.LeViT_128 cuda:0 9549.2611232126 images/s @ batch size 2048
-levit.LeViT_192 cuda:0 8998.650484948064 images/s @ batch size 2048
-levit.LeViT_256 cuda:0 6900.541447194741 images/s @ batch size 2048
-levit.LeViT_384 cuda:0 4272.404195393602 images/s @ batch size 1024
-timm.models.efficientnet_b0 cuda:0 4786.837263081271 images/s @ batch size 1024
-timm.models.efficientnet_b1 cuda:0 2905.998714449453 images/s @ batch size 1024
-timm.models.efficientnet_b2 cuda:0 2165.0462324065024 images/s @ batch size 512
-timm.models.efficientnet_b3 cuda:0 1278.9921691284228 images/s @ batch size 512
-timm.models.efficientnet_b4 cuda:0 610.8324957966724 images/s @ batch size 256
-
-
-nb processors 80
 model name	: Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz
-Using 1 cpu thread
-timm.models.resnet50 cpu 12.737755338331594 images/s @ batch size 16
-timm.models.vit_deit_tiny_distilled_patch16_224 cpu 39.70887593606414 images/s @ batch size 16
-timm.models.vit_deit_small_distilled_patch16_224 cpu 13.911528148466772 images/s @ batch size 16
-levit.LeViT_128S cpu 141.33179647408213 images/s @ batch size 16
-levit.LeViT_128 cpu 99.11614257251433 images/s @ batch size 16
-levit.LeViT_192 cpu 76.51770043371882 images/s @ batch size 16
-levit.LeViT_256 cpu 44.973788469164774 images/s @ batch size 16
-levit.LeViT_384 cpu 22.416690779798216 images/s @ batch size 16
-timm.models.efficientnet_b0 cpu 30.748475980811545 images/s @ batch size 16
-timm.models.efficientnet_b1 cpu 18.525386053869315 images/s @ batch size 16
-timm.models.efficientnet_b2 cpu 10.765064648427506 images/s @ batch size 16
-timm.models.efficientnet_b3 cpu 5.498611845346036 images/s @ batch size 16
-timm.models.efficientnet_b4 cpu 2.3968464952232265 images/s @ batch size 16
+timm.models.resnet50 cpu 12.016911703481131 images/s @ batch size 16
+timm.models.vit_deit_small_distilled_patch16_224 cpu 14.348798446856858 images/s @ batch size 16
+timm.models.vit_deit_tiny_distilled_patch16_224 cpu 40.2349772036907 images/s @ batch size 16
+levit.LeViT_128S cpu 144.1949651636412 images/s @ batch size 16
+levit.LeViT_128 cpu 102.12269634884447 images/s @ batch size 16
+levit.LeViT_192 cpu 77.26235422758357 images/s @ batch size 16
+levit.LeViT_256 cpu 43.99343660045797 images/s @ batch size 16
+levit.LeViT_384 cpu 24.25881057338392 images/s @ batch size 16
+timm.models.efficientnet_b0 cpu 28.168883099150083 images/s @ batch size 16
+timm.models.efficientnet_b1 cpu 19.573132817372812 images/s @ batch size 16
+timm.models.efficientnet_b2 cpu 13.774425645372835 images/s @ batch size 16
+timm.models.efficientnet_b3 cpu 6.052200595201753 images/s @ batch size 16
+timm.models.efficientnet_b4 cpu 2.589793932115455 images/s @ batch size 16
+
+
 
 
 Devserver
