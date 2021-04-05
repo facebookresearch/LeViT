@@ -12,9 +12,9 @@ def load_weights(net, path):
     d = torch.load(path)['model']
     D = net.state_dict()
     for k in d.keys():
-        if D[k].shape != d[k].shape:
+        if D[k].shape != d[k].shape: 
             d[k] = d[k][:, :, None, None]
-
+    net.load_state_dict(d)
 
 @register_model
 def LeViT_c_128S(num_classes, distillation=False, pretrained=False, fuse=False):
@@ -293,7 +293,6 @@ class AttentionSubsample(torch.nn.Module):
              if self.training else self.ab)
         attn = attn.softmax(dim=-1)
 
-        # (d,HW)  (HW,hw) -> (d,hw)
         x = (v @ attn.transpose(-2, -1)).reshape(
             B, -1, self.resolution_, self.resolution_)
         x = self.proj(x)
