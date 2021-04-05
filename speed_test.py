@@ -1,18 +1,18 @@
-# srun --gres=gpu:8 --partition dev --constraint=volta16gb -c80 -t100 --mem 500GB --pty python speed_test.py | tee timings
+# srun --gres=gpu:8 --partition dev --constraint=volta16gb -c80 -t100 --mem 500GB python -u speed_test.py | tee timings
 import os
 import apex
 import torch
 import torchvision
 import time
 import timm
-import levit
+import levit, levit_c
 import torchvision
 import utils
 torch.autograd.set_grad_enabled(False)
 
 
 T0 = 10
-T1 = 30
+T1 = 60
 
 
 def compute_throughput_cpu(name, model, device, batch_size, resolution=224):
@@ -30,7 +30,6 @@ def compute_throughput_cpu(name, model, device, batch_size, resolution=224):
     timing = torch.as_tensor(timing, dtype=torch.float32)
     print(name, device, batch_size / timing.mean().item(),
           'images/s @ batch size', batch_size)
-    print(timing.median().item() / timing.min().item(), timing.numel())
 
 
 def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
@@ -53,7 +52,6 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
     timing = torch.as_tensor(timing, dtype=torch.float32)
     print(name, device, batch_size / timing.mean().item(),
           'images/s @ batch size', batch_size)
-    print(timing.median().item() / timing.min().item(), timing.numel())
 
 
 for device in ['cuda:0', 'cpu']:
@@ -73,10 +71,15 @@ for device in ['cuda:0', 'cpu']:
         ('timm.models.vit_deit_tiny_distilled_patch16_224', 2048, 224),
         ('timm.models.vit_deit_small_distilled_patch16_224', 2048, 224),
         ('levit.LeViT_128S', 2048, 224),
+        ('levit_c.LeViT_c_128S', 2048, 224),
         ('levit.LeViT_128', 2048, 224),
+        ('levit_c.LeViT_c_128', 2048, 224),
         ('levit.LeViT_192', 2048, 224),
+        ('levit_c.LeViT_c_192', 2048, 224),
         ('levit.LeViT_256', 2048, 224),
+        ('levit_c.LeViT_c_256', 2048, 224),
         ('levit.LeViT_384', 1024, 224),
+        ('levit_c.LeViT_c_384', 1024, 224),
         ('timm.models.efficientnet_b0',   1024, 224),
         ('timm.models.efficientnet_b1',   1024, 240),
         ('timm.models.efficientnet_b2',   512, 260),
@@ -99,4 +102,3 @@ for device in ['cuda:0', 'cpu']:
         model = torch.jit.trace(model, inputs)
         compute_throughput(n, model, device,
                            batch_size, resolution=resolution)
-        print()
