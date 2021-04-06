@@ -4,6 +4,11 @@ LeViT_192 621541244 FLOPs 9961261 parameters
 LeViT_256 1065926648 FLOPs 17326188 parameters
 LeViT_384 2334044148 FLOPs 38567086 parameters
 
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-128S-model.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-128-model.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-192-model.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-256-model.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-384-model.pth
 
 weights in /checkpoint/benjamingraham/LeViT/weights/*/model.pth
 
