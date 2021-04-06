@@ -2,7 +2,7 @@
 
 This repository contains PyTorch evaluation code, training code and pretrained models for LeViT.
 
-They obtain competitive tradeoffs in terms of speed / precision:
+They obtain competitive tradeoffs in terms of speed / precision: [Todo: Update figure!]
 
 ![LeViT](.github/levit.png)
 
