@@ -6,7 +6,7 @@ They obtain competitive tradeoffs in terms of speed / precision: [Todo: Update f
 
 ![LeViT](.github/levit.png)
 
-For details see [LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference](https://arxiv.org/abs/2104.00000) by Benjamin Graham, Alaaeldin El-Nouby, Hugo Touvron, Pierre Stock, Armand Joulin, Hervé Jégou and Matthijs Douze.
+For details see [LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference](https://arxiv.org/abs/2104.01136) by Benjamin Graham, Alaaeldin El-Nouby, Hugo Touvron, Pierre Stock, Armand Joulin, Hervé Jégou and Matthijs Douze.
 
 If you use this code for a paper please cite:
 
@@ -14,7 +14,7 @@ If you use this code for a paper please cite:
 @article{graham2021levit,
   title={LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference},
   author={Benjamin Graham and Alaaeldin El-Nouby and Hugo Touvron and Pierre Stock and Armand Joulin and Herv\'e J\'egou and Matthijs Douze},
-  journal={arXiv preprint arXiv:2021.00000},
+  journal={arXiv preprint arXiv:22104.01136},
   year={2021}
 }
 ```
