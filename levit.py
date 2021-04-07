@@ -1,7 +1,7 @@
+#Derived from https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/vision_transformer.py
+
 import torch
 import itertools
-import time
-import os
 import utils
 
 from timm.models.vision_transformer import trunc_normal_
@@ -9,7 +9,7 @@ from timm.models.registry import register_model
 
 
 @register_model
-def LeViT_128S(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_128S(num_classes=1000, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_6_8', X='2_3_4',
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
@@ -21,7 +21,7 @@ def LeViT_128S(num_classes, distillation=False, pretrained=False, fuse=False):
 
 
 @register_model
-def LeViT_128(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_128(num_classes=1000, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_8_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
@@ -33,7 +33,7 @@ def LeViT_128(num_classes, distillation=False, pretrained=False, fuse=False):
 
 
 @register_model
-def LeViT_192(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_192(num_classes=1000, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='192_288_384', D=32, N='3_5_6', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
@@ -45,7 +45,7 @@ def LeViT_192(num_classes, distillation=False, pretrained=False, fuse=False):
 
 
 @register_model
-def LeViT_256(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_256(num_classes=1000, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='256_384_512', D=32, N='4_6_8', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
@@ -57,7 +57,7 @@ def LeViT_256(num_classes, distillation=False, pretrained=False, fuse=False):
 
 
 @register_model
-def LeViT_384(num_classes, distillation=False, pretrained=False, fuse=False):
+def LeViT_384(num_classes=1000, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:

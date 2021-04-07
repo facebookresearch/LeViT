@@ -244,8 +244,7 @@ def replace_batchnorm(net):
         if hasattr(child, 'fuse'):
             setattr(net, child_name, child.fuse())
         elif isinstance(child, torch.nn.Conv2d):
-            getattr(net, child_name).bias = torch.nn.Parameter(
-                torch.zeros(getattr(net, child_name).weight.size(0)))
+            child.bias=torch.nn.Parameter(torch.zeros(child.weight.size(0)))
         elif isinstance(child, torch.nn.BatchNorm2d):
             setattr(net, child_name, torch.nn.Identity())
         else:
