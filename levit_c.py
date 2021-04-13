@@ -1,7 +1,7 @@
+#Derived from https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/vision_transformer.py
+
 import torch
 import itertools
-import time
-import os
 import utils
 
 from timm.models.vision_transformer import trunc_normal_
@@ -21,7 +21,7 @@ def LeViT_c_128S(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_6_8', X='2_3_4',
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-128S-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weight4/LeViT-128S-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -32,7 +32,7 @@ def LeViT_c_128(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='128_256_384', D=16, N='4_8_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-128-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weight4/LeViT-128-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -43,7 +43,7 @@ def LeViT_c_192(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='192_288_384', D=32, N='3_5_6', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-192-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weight4/LeViT-192-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -54,7 +54,7 @@ def LeViT_c_256(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='256_384_512', D=32, N='4_6_8', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-256-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weight4/LeViT-256-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -65,7 +65,7 @@ def LeViT_c_384(num_classes, distillation=False, pretrained=False, fuse=False):
     net = model_factory(C='384_576_768', D=32, N='6_9_12', X='4_4_4',
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
-        load_weights(net, '/checkpoint/benjamingraham/LeViT/weights/LeViT-384-model.pth')
+        load_weights(net, '/checkpoint/benjamingraham/LeViT/weight4/LeViT-384-model.pth')
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -237,7 +237,7 @@ class AttentionSubsample(torch.nn.Module):
         self.kv = Conv2d_BN(in_dim, h, resolution=resolution)
         self.q = torch.nn.Sequential(
             torch.nn.AvgPool2d(1, stride, 0),
-            Conv2d_BN(in_dim, nh_kd))
+            Conv2d_BN(in_dim, nh_kd, resolution=resolution_))
         self.proj = torch.nn.Sequential(
             activation(), Conv2d_BN(self.d*num_heads, out_dim, resolution=resolution_))
 
@@ -426,8 +426,8 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
         mlp_ratio=[2, 2, 2],
         down_ops=[
             #('Subsample',key_dim, num_heads, attn_ratio, mlp_ratio, stride)
-            ['Subsample', D, embed_dim[0]//D, 2, 2, 2],
-            ['Subsample', D, embed_dim[1]//D, 2, 2, 2],
+            ['Subsample', D, embed_dim[0]//D, 4, 2, 2],
+            ['Subsample', D, embed_dim[1]//D, 4, 2, 2],
         ],
         attention_activation=act,
         activation=act,

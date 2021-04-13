@@ -14,7 +14,7 @@ def LeViT_128S(num_classes=1000, distillation=False, pretrained=False, fuse=Fals
                         activation='Hardswish', distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            '/checkpoint/benjamingraham/LeViT/weights/LeViT-128S-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights4/LeViT-128S.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -26,7 +26,7 @@ def LeViT_128(num_classes=1000, distillation=False, pretrained=False, fuse=False
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            '/checkpoint/benjamingraham/LeViT/weights/LeViT-128-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights4/LeViT-128.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -38,7 +38,7 @@ def LeViT_192(num_classes=1000, distillation=False, pretrained=False, fuse=False
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            '/checkpoint/benjamingraham/LeViT/weights/LeViT-192-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights4/LeViT-192.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -50,7 +50,7 @@ def LeViT_256(num_classes=1000, distillation=False, pretrained=False, fuse=False
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            '/checkpoint/benjamingraham/LeViT/weights/LeViT-256-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights4/LeViT-256.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -62,7 +62,7 @@ def LeViT_384(num_classes=1000, distillation=False, pretrained=False, fuse=False
                         activation='Hardswish',  distillation=distillation, num_classes=num_classes)
     if pretrained:
         net.load_state_dict(torch.load(
-            '/checkpoint/benjamingraham/LeViT/weights/LeViT-384-model.pth')['model'])
+            '/checkpoint/benjamingraham/LeViT/weights4/LeViT-384.pth')['model'])
     if fuse:
         utils.replace_batchnorm(net)
     return net
@@ -475,8 +475,8 @@ def model_factory(C, D, X, N, activation, num_classes, distillation):
         mlp_ratio=[2, 2, 2],
         down_ops=[
             #('Subsample',key_dim, num_heads, attn_ratio, mlp_ratio, stride)
-            ['Subsample', D, embed_dim[0]//D, 2, 2, 2],
-            ['Subsample', D, embed_dim[1]//D, 2, 2, 2],
+            ['Subsample', D, embed_dim[0]//D, 4, 2, 2],
+            ['Subsample', D, embed_dim[1]//D, 4, 2, 2],
         ],
         attention_activation=act,
         activation=act,
