@@ -25,7 +25,7 @@ We provide baseline LeViT  models trained with distllation on ImageNet 2012.
    
 
 | name       | acc@1 | acc@5 | #FLOPs | #params | url                                                          | 
-| ---------- | ----- | ----- | ------ | ---_--- | ------------------------------------------------------------ |
+| ---------- | ----- | ----- | ------ | ------- | ------------------------------------------------------------ |
 | LeViT-128S |  76.6 |  92.9 |   305M |    7.8M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-128S.pth) |
 | LeViT-128  |  78.6 |  94.0 |   406M |    9.2M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-128.pth)  |
 | LeViT-192  |  80.0 |  94.7 |   658M |     11M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-192.pth)  |
