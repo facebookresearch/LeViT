@@ -1,12 +1,12 @@
 model name      : Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz
 Using 1 cpu thread
-timm.models.vit_deit_small_distilled_patch16_224 cpu 13.74950884267579 images/s @ batch size 16
 timm.models.vit_deit_tiny_distilled_patch16_224 cpu 39.10796320316016 images/s @ batch size 16
+timm.models.vit_deit_small_distilled_patch16_224 cpu 13.74950884267579 images/s @ batch size 16
 timm.models.efficientnet_b0 cpu 30.092706251584172 images/s @ batch size 16
 timm.models.efficientnet_b1 cpu 20.042407238086536 images/s @ batch size 16
 timm.models.efficientnet_b2 cpu 13.15527585282857 images/s @ batch size 16
-timm.models.efficientnet_b4 cpu 2.4550634208015545 images/s @ batch size 16
 timm.models.efficientnet_b3 cpu 5.850004428330435 images/s @ batch size 16
+timm.models.efficientnet_b4 cpu 2.4550634208015545 images/s @ batch size 16
 levit.LeViT_128S cpu 131.08426514761177 images/s @ batch size 16
 levit.LeViT_128 cpu 94.02966201957373 images/s @ batch size 16
 levit.LeViT_192 cpu 65.01392437813367 images/s @ batch size 16
@@ -14,8 +14,8 @@ levit.LeViT_256 cpu 42.50917587590354 images/s @ batch size 16
 levit.LeViT_384 cpu 23.117487464467157 images/s @ batch size 16
 
 Tesla V100-SXM2-16GB
-timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1931.6085276556053 images/s @ batch size 2048
 timm.models.vit_deit_tiny_distilled_patch16_224 cuda:0 3972.7563922148643 images/s @ batch size 2048
+timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1931.6085276556053 images/s @ batch size 2048
 timm.models.efficientnet_b0 cuda:0 4754.464608131096 images/s @ batch size 1024
 timm.models.efficientnet_b1 cuda:0 2882.448345436045 images/s @ batch size 1024
 timm.models.efficientnet_b2 cuda:0 2149.340947246039 images/s @ batch size 512
