@@ -18,7 +18,7 @@ def parse_args():
         "Submitit for DeiT", parents=[classification_parser])
     parser.add_argument("--ngpus", default=8, type=int,
                         help="Number of gpus to request on each node")
-    parser.add_argument("--nodes", default=4, type=int,
+    parser.add_argument("--nodes", default=1, type=int,
                         help="Number of nodes to request")
     parser.add_argument("--timeout", default=4320,
                         type=int, help="Duration of the job")
