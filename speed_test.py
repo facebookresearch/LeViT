@@ -13,7 +13,6 @@ torch.autograd.set_grad_enabled(False)
 T0 = 10
 T1 = 60
 
-
 def compute_throughput_cpu(name, model, device, batch_size, resolution=224):
     inputs = torch.randn(batch_size, 3, resolution, resolution, device=device)
     # warmup
@@ -53,7 +52,7 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
           'images/s @ batch size', batch_size)
 
 
-for device in ['cuda:0']:#, 'cpu']:
+for device in ['cuda:0', 'cpu']:
     if device == 'cpu':
         os.system('echo -n "nb processors "; '
                   'cat /proc/cpuinfo | grep ^processor | wc -l; '
