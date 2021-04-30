@@ -1,6 +1,5 @@
-# srun --gres=gpu:8 --partition dev --constraint=volta16gb -c80 -t100 --mem 500GB python -u speed_test.py | tee timings
+# srun --gres=gpu:8 --partition dev --constraint=volta16gb -c80 -t1000 --mem 500GB python -u speed_test.py | tee timings
 import os
-# import apex
 import torch
 import torchvision
 import time
@@ -54,7 +53,7 @@ def compute_throughput_cuda(name, model, device, batch_size, resolution=224):
           'images/s @ batch size', batch_size)
 
 
-for device in "cpu", : # ['cuda:0', 'cpu']:
+for device in ['cuda:0']:#, 'cpu']:
     if device == 'cpu':
         os.system('echo -n "nb processors "; '
                   'cat /proc/cpuinfo | grep ^processor | wc -l; '
@@ -90,8 +89,6 @@ for device in "cpu", : # ['cuda:0', 'cpu']:
                              resolution, device=device)
         model = eval(n)(num_classes=1000)
         utils.replace_batchnorm(model)
-        # if device != 'cpu' and 'deit' in n:
-        #    utils.replace_layernorm(model)
         model.to(device)
         model.eval()
         model = torch.jit.trace(model, inputs)

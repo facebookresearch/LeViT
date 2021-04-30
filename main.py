@@ -28,20 +28,15 @@ import utils
 
 def get_args_parser():
     parser = argparse.ArgumentParser(
-        'DeiT training and evaluation script', add_help=False)
+        'LeViT training and evaluation script', add_help=False)
     parser.add_argument('--batch-size', default=256, type=int)
-    parser.add_argument('--epochs', default=500, type=int)
+    parser.add_argument('--epochs', default=1000, type=int)
 
     # Model parameters
     parser.add_argument('--model', default='LeViT_256', type=str, metavar='MODEL',
                         help='Name of model to train')
     parser.add_argument('--input-size', default=224,
                         type=int, help='images input size')
-
-    parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
-                        help='Dropout rate (default: 0.)')
-    parser.add_argument('--drop-path', type=float, default=0, metavar='PCT',  # down from 0.1
-                        help='Drop path rate (default: 0)')
 
     parser.add_argument('--model-ema', action='store_true')
     parser.add_argument(
@@ -80,7 +75,7 @@ def get_args_parser():
                         help='learning rate noise std-dev (default: 1.0)')
     parser.add_argument('--warmup-lr', type=float, default=1e-6, metavar='LR',
                         help='warmup learning rate (default: 1e-6)')
-    parser.add_argument('--min-lr', type=float, default=1e-6, metavar='LR',
+    parser.add_argument('--min-lr', type=float, default=1e-5, metavar='LR',
                         help='lower lr bound for cyclic schedulers that hit 0 (1e-5)')
 
     parser.add_argument('--decay-epochs', type=float, default=30, metavar='N',
@@ -259,9 +254,10 @@ def main(args):
     print(f"Creating model: {args.model}")
     model = create_model(
         args.model,
-        pretrained=args.eval,
-        distillation=(args.distillation_type != 'none'),
         num_classes=args.nb_classes,
+        distillation=(args.distillation_type != 'none'),
+        pretrained=args.eval,
+        fuse=args.eval,
     )
 
     if args.finetune:
@@ -277,28 +273,6 @@ def main(args):
             if k in checkpoint_model and checkpoint_model[k].shape != state_dict[k].shape:
                 print(f"Removing key {k} from pretrained checkpoint")
                 del checkpoint_model[k]
-
-        # interpolate position embedding
-        pos_embed_checkpoint = checkpoint_model['pos_embed']
-        embedding_size = pos_embed_checkpoint.shape[-1]
-        num_patches = model.patch_embed.num_patches
-        num_extra_tokens = model.pos_embed.shape[-2] - num_patches
-        # height (== width) for the checkpoint position embedding
-        orig_size = int(
-            (pos_embed_checkpoint.shape[-2] - num_extra_tokens) ** 0.5)
-        # height (== width) for the new position embedding
-        new_size = int(num_patches ** 0.5)
-        # class_token and dist_token are kept unchanged
-        extra_tokens = pos_embed_checkpoint[:, :num_extra_tokens]
-        # only the position tokens are interpolated
-        pos_tokens = pos_embed_checkpoint[:, num_extra_tokens:]
-        pos_tokens = pos_tokens.reshape(-1, orig_size,
-                                        orig_size, embedding_size).permute(0, 3, 1, 2)
-        pos_tokens = torch.nn.functional.interpolate(
-            pos_tokens, size=(new_size, new_size), mode='bicubic', align_corners=False)
-        pos_tokens = pos_tokens.permute(0, 2, 3, 1).flatten(1, 2)
-        new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
-        checkpoint_model['pos_embed'] = new_pos_embed
 
         model.load_state_dict(checkpoint_model, strict=False)
 
@@ -441,7 +415,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        'DeiT training and evaluation script', parents=[get_args_parser()])
+        'LeViT training and evaluation script', parents=[get_args_parser()])
     args = parser.parse_args()
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)

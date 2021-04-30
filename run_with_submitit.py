@@ -8,7 +8,7 @@ import os
 import uuid
 from pathlib import Path
 
-import main2 as classification
+import main as classification
 import submitit
 
 
@@ -18,7 +18,7 @@ def parse_args():
         "Submitit for DeiT", parents=[classification_parser])
     parser.add_argument("--ngpus", default=8, type=int,
                         help="Number of gpus to request on each node")
-    parser.add_argument("--nodes", default=1, type=int,
+    parser.add_argument("--nodes", default=4, type=int,
                         help="Number of nodes to request")
     parser.add_argument("--timeout", default=4320,
                         type=int, help="Duration of the job")
@@ -57,7 +57,7 @@ class Trainer(object):
         self.args = args
 
     def __call__(self):
-        import main2 as classification
+        import main as classification
 
         self._setup_gpu_args()
         classification.main(self.args)

@@ -20,16 +20,27 @@ If you use this code for a paper please cite:
 ```
 
 # Model Zoo
-
+  
 We provide baseline LeViT  models trained with distllation on ImageNet 2012.
+   
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-128.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-128S.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-192.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-256.pth
+wget https://dl.fbaipublicfiles.com/LeViT/LeViT-384.pth
+LeViT_128S 305108946 FLOPs 7756466 parameters
+LeViT_128 406114880 FLOPs 9188864 parameters
+LeViT_192 657601916 FLOPs 10918613 parameters
+LeViT_256 1128024056 FLOPs 18856276 parameters
+LeViT_384 2352935380 FLOPs 39074100 parameters
 
-| name | acc@1 | acc@5 | #params | url |
-| --- | --- | --- | --- | --- |
-| LeViT-128S | 75.6 |  92.3 | 7.0M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
-| LeViT-128  | 77.4 |  93.4 | 8.4M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
-| LeViT-192  | 79.1 |  94.3 | 10M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
-| LeViT-256  | 81.1 |  95.3 | 17M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
-| LeViT-384  | 82.4 |  95.9 | 39M | [model](https://dl.fbaipublicfiles.com/LeViT/) |
+| name       | acc@1 | acc@5 | #FLOPs | #params | url |
+| ---------- | ----- | ----- | ------ |--- ---- | ---------------------------------------------- |
+| LeViT-128S |  76.6 |  92.9 |   305M |    7.8M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-128S.pth) |
+| LeViT-128  |  78.6 |  94.0 |   406M |    9.2M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-128.pth) |
+| LeViT-192  |  80.0 |  94.7 |   658M |     11M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-192.pth) |
+| LeViT-256  |  81.6 |  95.4 |  1120M |     19M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-256.pth) |
+| LeViT-384  |  82.6 |  96.0 |  2353M |     39M | [model](https://dl.fbaipublicfiles.com/LeViT/LeViT-384.pth) |
 
 
 # Usage
