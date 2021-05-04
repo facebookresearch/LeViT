@@ -15,19 +15,19 @@ from timm.models.registry import register_model
 specification = {
     'LeViT_128S': {
         'C': '128_256_384', 'D': 16, 'N': '4_6_8', 'X': '2_3_4', 'drop_path': 0,
-        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-128S.pth'},
+        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-128S-96703c44.pth'},
     'LeViT_128': {
         'C': '128_256_384', 'D': 16, 'N': '4_8_12', 'X': '4_4_4', 'drop_path': 0,
-        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-128.pth'},
+        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-128-b88c2750.pth'},
     'LeViT_192': {
         'C': '192_288_384', 'D': 32, 'N': '3_5_6', 'X': '4_4_4', 'drop_path': 0,
-        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-192.pth'},
+        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-192-92712e41.pth'},
     'LeViT_256': {
         'C': '256_384_512', 'D': 32, 'N': '4_6_8', 'X': '4_4_4', 'drop_path': 0,
-        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-256.pth'},
+        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-256-13b5763e.pth'},
     'LeViT_384': {
         'C': '384_512_768', 'D': 32, 'N': '6_9_12', 'X': '4_4_4', 'drop_path': 0.1,
-        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-384.pth'},
+        'weights': 'https://dl.fbaipublicfiles.com/LeViT/LeViT-384-9bdaf2e2.pth'},
 }
 
 
