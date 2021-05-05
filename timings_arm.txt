@@ -1,18 +1,19 @@
 (pytorch_venv) matthijs@ip-10-100-175-26:~/LeViT$ python speed_test.py
+no cuda
 nb processors 32
 Using 1 cpu thread
-timm.models.resnet50 cpu 1.3103159517920528 images/s @ batch size 16
-/home/matthijs/pytorch-image-models/timm/models/vision_transformer.py:220: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+timm.models.resnet50 cpu 1.3687126769128302 images/s @ batch size 16
+/home/matthijs/pytorch-image-models/timm/models/vision_transformer.py:219: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
   assert H == self.img_size[0] and W == self.img_size[1], \
-timm.models.vit_deit_tiny_distilled_patch16_224 cpu 2.2498667691567444 images/s @ batch size 16
-timm.models.vit_deit_small_distilled_patch16_224 cpu 0.9857344434928851 images/s @ batch size 16
-levit.LeViT_128S cpu 7.663250670988276 images/s @ batch size 16
-levit.LeViT_128 cpu 5.41428920538979 images/s @ batch size 16
-levit.LeViT_192 cpu 5.318851904281871 images/s @ batch size 16
-levit.LeViT_256 cpu 3.953928383606008 images/s @ batch size 16
-levit.LeViT_384 cpu 2.4445924524744385 images/s @ batch size 16
-timm.models.efficientnet_b0 cpu 3.216612592213758 images/s @ batch size 16
-timm.models.efficientnet_b1 cpu 2.2161022582566643 images/s @ batch size 16
-timm.models.efficientnet_b2 cpu 1.2469494466133832 images/s @ batch size 16
-timm.models.efficientnet_b3 cpu 0.8177469020868776 images/s @ batch size 16
-timm.models.efficientnet_b4 cpu 0.46684567427708723 images/s @ batch size 16
+timm.models.vit_deit_tiny_distilled_patch16_224 cpu 16.789331601416873 images/s @ batch size 16
+timm.models.vit_deit_small_distilled_patch16_224 cpu 7.570103776813635 images/s @ batch size 16
+levit.LeViT_128S cpu 39.05605600631973 images/s @ batch size 16
+levit.LeViT_128 cpu 30.80994028780075 images/s @ batch size 16
+levit.LeViT_192 cpu 24.21503939611122 images/s @ batch size 16
+levit.LeViT_256 cpu 16.364732684723613 images/s @ batch size 16
+levit.LeViT_384 cpu 9.372454461264685 images/s @ batch size 16
+timm.models.efficientnet_b0 cpu 3.436668164739997 images/s @ batch size 16
+timm.models.efficientnet_b1 cpu 2.2772622358512637 images/s @ batch size 16
+timm.models.efficientnet_b2 cpu 1.2587953790191817 images/s @ batch size 16
+timm.models.efficientnet_b3 cpu 0.8099315827347229 images/s @ batch size 16
+timm.models.efficientnet_b4 cpu 0.4519074520968645 images/s @ batch size 16
