@@ -1,0 +1,50 @@
+NVIDIA GPU
+----------
+Tesla V100-SXM2-16GB
+timm.models.vit_deit_tiny_distilled_patch16_224 cuda:0 3972.7563922148643 images/s @ batch size 2048
+timm.models.vit_deit_small_distilled_patch16_224 cuda:0 1931.6085276556053 images/s @ batch size 2048
+levit.LeViT_128S cuda:0 12879.792635259 images/s @ batch size 2048
+levit.LeViT_128 cuda:0 9265.807492349617 images/s @ batch size 2048
+levit.LeViT_192 cuda:0 8601.135420601478 images/s @ batch size 2048
+levit.LeViT_256 cuda:0 6581.825416517691 images/s @ batch size 2048
+levit.LeViT_384 cuda:0 4165.298684314445 images/s @ batch size 1024
+timm.models.efficientnet_b0 cuda:0 4754.464608131096 images/s @ batch size 1024
+timm.models.efficientnet_b1 cuda:0 2882.448345436045 images/s @ batch size 1024
+timm.models.efficientnet_b2 cuda:0 2149.340947246039 images/s @ batch size 512
+timm.models.efficientnet_b3 cuda:0 1271.7951431861243 images/s @ batch size 512
+timm.models.efficientnet_b4 cuda:0 606.0124649035685 images/s @ batch size 256
+
+
+Intel CPU
+---------
+model name      : Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz
+Using 1 cpu thread
+timm.models.vit_deit_tiny_distilled_patch16_224 cpu 39.10796320316016 images/s @ batch size 16
+timm.models.vit_deit_small_distilled_patch16_224 cpu 13.74950884267579 images/s @ batch size 16
+levit.LeViT_128S cpu 131.08426514761177 images/s @ batch size 16
+levit.LeViT_128 cpu 94.02966201957373 images/s @ batch size 16
+levit.LeViT_192 cpu 65.01392437813367 images/s @ batch size 16
+levit.LeViT_256 cpu 42.50917587590354 images/s @ batch size 16
+levit.LeViT_384 cpu 23.117487464467157 images/s @ batch size 16
+timm.models.efficientnet_b0 cpu 30.092706251584172 images/s @ batch size 16
+timm.models.efficientnet_b1 cpu 20.042407238086536 images/s @ batch size 16
+timm.models.efficientnet_b2 cpu 13.15527585282857 images/s @ batch size 16
+timm.models.efficientnet_b3 cpu 5.850004428330435 images/s @ batch size 16
+timm.models.efficientnet_b4 cpu 2.4550634208015545 images/s @ batch size 16
+
+
+ARM CPU
+-------
+Using 1 cpu thread
+timm.models.vit_deit_tiny_distilled_patch16_224 cpu 16.789331601416873 images/s @ batch size 16
+timm.models.vit_deit_small_distilled_patch16_224 cpu 7.570103776813635 images/s @ batch size 16
+levit.LeViT_128S cpu 39.05605600631973 images/s @ batch size 16
+levit.LeViT_128 cpu 30.80994028780075 images/s @ batch size 16
+levit.LeViT_192 cpu 24.21503939611122 images/s @ batch size 16
+levit.LeViT_256 cpu 16.364732684723613 images/s @ batch size 16
+levit.LeViT_384 cpu 9.372454461264685 images/s @ batch size 16
+timm.models.efficientnet_b0 cpu 3.436668164739997 images/s @ batch size 16
+timm.models.efficientnet_b1 cpu 2.2772622358512637 images/s @ batch size 16
+timm.models.efficientnet_b2 cpu 1.2587953790191817 images/s @ batch size 16
+timm.models.efficientnet_b3 cpu 0.8099315827347229 images/s @ batch size 16
+timm.models.efficientnet_b4 cpu 0.4519074520968645 images/s @ batch size 16
