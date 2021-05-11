@@ -149,7 +149,7 @@ class Residual(torch.nn.Module):
 
     def forward(self, x):
         if self.training and self.drop > 0:
-            return x + self.m(x) * torch.rand(x.size(0), 1, 1,
+            return x + self.m(x) * torch.rand(x.size(0), 1, 1, 1,
                                               device=x.device).ge_(self.drop).div(1 - self.drop).detach()
         else:
             return x + self.m(x)
