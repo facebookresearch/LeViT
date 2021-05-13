@@ -85,7 +85,7 @@ class Conv2d_BN(torch.nn.Sequential):
         global FLOPS_COUNTER
         output_points = ((resolution + 2 * pad - dilation *
                           (ks - 1) - 1) // stride + 1)**2
-        FLOPS_COUNTER += a * b * output_points * (ks**2)
+        FLOPS_COUNTER += a * b * output_points * (ks**2) // groups
 
     @torch.no_grad()
     def fuse(self):
