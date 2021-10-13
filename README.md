@@ -6,16 +6,18 @@ They obtain competitive tradeoffs in terms of speed / precision:
 
 ![LeViT](.github/levit.png)
 
-For details see [LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference](https://arxiv.org/abs/2104.01136) by Benjamin Graham, Alaaeldin El-Nouby, Hugo Touvron, Pierre Stock, Armand Joulin, Hervé Jégou and Matthijs Douze.
+For details see [LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference](https://openaccess.thecvf.com/content/ICCV2021/html/Graham_LeViT_A_Vision_Transformer_in_ConvNets_Clothing_for_Faster_Inference_ICCV_2021_paper.html) by Benjamin Graham, Alaaeldin El-Nouby, Hugo Touvron, Pierre Stock, Armand Joulin, Hervé Jégou and Matthijs Douze.
 
 If you use this code for a paper please cite:
 
 ```
-@article{graham2021levit,
-  title={LeViT: a Vision Transformer in ConvNet's Clothing for Faster Inference},
-  author={Benjamin Graham and Alaaeldin El-Nouby and Hugo Touvron and Pierre Stock and Armand Joulin and Herv\'e J\'egou and Matthijs Douze},
-  journal={arXiv preprint arXiv:22104.01136},
-  year={2021}
+@InProceedings{Graham_2021_ICCV,
+    author    = {Graham, Benjamin and El-Nouby, Alaaeldin and Touvron, Hugo and Stock, Pierre and Joulin, Armand and Jegou, Herve and Douze, Matthijs},
+    title     = {LeViT: A Vision Transformer in ConvNet's Clothing for Faster Inference},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2021},
+    pages     = {12259-12269}
 }
 ```
 
