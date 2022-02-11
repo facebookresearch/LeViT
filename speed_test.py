@@ -75,8 +75,8 @@ for device in ['cuda:0', 'cpu']:
 
     for n, batch_size0, resolution in [
         ('timm.models.resnet50', 1024, 224),
-        ('timm.models.vit_deit_tiny_distilled_patch16_224', 2048, 224),
-        ('timm.models.vit_deit_small_distilled_patch16_224', 2048, 224),
+        ('timm.models.deit_tiny_distilled_patch16_224', 2048, 224),
+        ('timm.models.deit_small_distilled_patch16_224', 2048, 224),
         ('levit.LeViT_128S', 2048, 224),
         ('levit.LeViT_128', 2048, 224),
         ('levit.LeViT_192', 2048, 224),
