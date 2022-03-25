@@ -94,7 +94,7 @@ class Conv2d_BN(torch.nn.Sequential):
         w = c.weight * w[:, None, None, None]
         b = bn.bias - bn.running_mean * bn.weight / \
             (bn.running_var + bn.eps)**0.5
-        m = torch.nn.Conv2d(w.size(1), w.size(
+        m = torch.nn.Conv2d(w.size(1) * self.c.groups, w.size(
             0), w.shape[2:], stride=self.c.stride, padding=self.c.padding, dilation=self.c.dilation, groups=self.c.groups)
         m.weight.data.copy_(w)
         m.bias.data.copy_(b)
