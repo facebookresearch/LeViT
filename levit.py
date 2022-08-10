@@ -119,7 +119,7 @@ class Linear_BN(torch.nn.Sequential):
         l, bn = self._modules.values()
         w = bn.weight / (bn.running_var + bn.eps)**0.5
         w = l.weight * w[:, None]
-        b = bn.bias - bn.running_mean * bn.weight / \
+        b = (bn.bias - bn.running_mean) * bn.weight / \
             (bn.running_var + bn.eps)**0.5
         m = torch.nn.Linear(w.size(1), w.size(0))
         m.weight.data.copy_(w)
