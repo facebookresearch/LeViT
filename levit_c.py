@@ -35,35 +35,35 @@ __all__ = [specification.keys()]
 
 @register_model
 def LeViT_c_128S(num_classes=1000, distillation=True,
-                 pretrained=False, fuse=False):
+                 pretrained=False, pretrained_cfg=None, fuse=False):
     return model_factory(**specification['LeViT_c_128S'], num_classes=num_classes,
                          distillation=distillation, pretrained=pretrained, fuse=fuse)
 
 
 @register_model
 def LeViT_c_128(num_classes=1000, distillation=True,
-                pretrained=False, fuse=False):
+                pretrained=False, pretrained_cfg=None, fuse=False):
     return model_factory(**specification['LeViT_c_128'], num_classes=num_classes,
                          distillation=distillation, pretrained=pretrained, fuse=fuse)
 
 
 @register_model
 def LeViT_c_192(num_classes=1000, distillation=True,
-                pretrained=False, fuse=False):
+                pretrained=False, pretrained_cfg=None, fuse=False):
     return model_factory(**specification['LeViT_c_192'], num_classes=num_classes,
                          distillation=distillation, pretrained=pretrained, fuse=fuse)
 
 
 @register_model
 def LeViT_c_256(num_classes=1000, distillation=True,
-                pretrained=False, fuse=False):
+                pretrained=False, pretrained_cfg=None, fuse=False):
     return model_factory(**specification['LeViT_c_256'], num_classes=num_classes,
                          distillation=distillation, pretrained=pretrained, fuse=fuse)
 
 
 @register_model
 def LeViT_c_384(num_classes=1000, distillation=True,
-                pretrained=False, fuse=False):
+                pretrained=False, pretrained_cfg=None, fuse=False):
     return model_factory(**specification['LeViT_c_384'], num_classes=num_classes,
                          distillation=distillation, pretrained=pretrained, fuse=fuse)
 
